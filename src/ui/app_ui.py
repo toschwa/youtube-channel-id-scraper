@@ -302,11 +302,3 @@ class AppUI(QWidget):
             QMessageBox.information(self, "Success", f"Selected channels saved to {output_file}")
         except Exception as e:
             QMessageBox.critical(self, "Save Error", str(e))
-
-if __name__ == "__main__":
-    import sys
-    from PySide6.QtWidgets import QApplication
-    app = QApplication(sys.argv)
-    window = AppUI()
-    window.show()
-    sys.exit(app.exec_())
