@@ -5,10 +5,10 @@ from datetime import datetime
 
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), '..', 'config.json')
 
-def load_config():
-    if not os.path.exists(CONFIG_FILE):
-        raise FileNotFoundError(f"Config file not found: {CONFIG_FILE}")
-    with open(CONFIG_FILE, "r") as f:
+def load_config(config_file=CONFIG_FILE):
+    if not os.path.exists(config_file):
+        raise FileNotFoundError(f"Config file not found: {config_file}")
+    with open(config_file, "r") as f:
         config = json.load(f)
     if "channel_id" not in config or "api_key" not in config or "output_file" not in config:
         raise KeyError("Config file must contain 'channel_id', 'api_key', and 'output_file'")

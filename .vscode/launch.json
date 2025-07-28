@@ -1,10 +1,24 @@
 {
     "configurations": [
         {
-            "name": "Python Debugger: Launch Main",
+            "name": "Launch Main",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/main.py"
+        },
+        {
+            "name": "Launch with no UI flag",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/main.py",
+            "args": ["--no-ui"],
+        },
+        {
+            "name": "Build with Nuitka",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}",
+            "args": ["-m", "nuitka", "--standalone", "src/main.py"],
         }
     ]
 }

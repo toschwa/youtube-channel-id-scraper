@@ -1,3 +1,3 @@
-PyQt5
-requests
-PyYAML
+PySide6
+PySide6-Addons
+Nuitka

@@ -1,9 +1,9 @@
-from PyQt5.QtWidgets import (
+from PySide6.QtWidgets import (
     QWidget, QLabel, QLineEdit, QPushButton, QListWidget, QListWidgetItem,
     QVBoxLayout, QMessageBox, QAbstractItemView, QProgressDialog, QHBoxLayout, QComboBox, QFrame
 )
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, QSize
-from PyQt5.QtGui import QIcon, QPixmap
+from PySide6.QtCore import Qt, QThread, Signal, QSize
+from PySide6.QtGui import QIcon, QPixmap
 import os
 import json
 import urllib.request
@@ -16,9 +16,9 @@ THUMB_CACHE_DIR = os.path.join(os.path.dirname(__file__), '..', '..', "thumb_cac
 os.makedirs(THUMB_CACHE_DIR, exist_ok=True)
 
 class FetchChannelsThread(QThread):
-    result = pyqtSignal(list)
-    error = pyqtSignal(str)
-    progress = pyqtSignal(int, int)  # current, total
+    result = Signal(list)
+    error = Signal(str)
+    progress = Signal(int, int)  # current, total
 
     def __init__(self, channel_id, api_key):
         super().__init__()
@@ -92,7 +92,7 @@ class AppUI(QWidget):
         # API Key
         self.label_api_key = QLabel("API Key:")
         self.entry_api_key = QLineEdit()
-        self.entry_api_key.setEchoMode(QLineEdit.Password)
+        self.entry_api_key.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addWidget(self.label_api_key)
         layout.addWidget(self.entry_api_key)
 
@@ -115,8 +115,8 @@ class AppUI(QWidget):
 
         # Divider line
         divider = QFrame()
-        divider.setFrameShape(QFrame.HLine)
-        divider.setFrameShadow(QFrame.Sunken)
+        divider.setFrameShape(QFrame.Shape.HLine)
+        divider.setFrameShadow(QFrame.Shadow.Sunken)
         layout.addWidget(divider)
 
         # Extra padding below divider
@@ -140,7 +140,7 @@ class AppUI(QWidget):
 
         # List Widget for channels
         self.listbox_channels = QListWidget()
-        self.listbox_channels.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.listbox_channels.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.listbox_channels.setIconSize(QSize(48, 48))
         self.listbox_channels.itemSelectionChanged.connect(self.update_selected_count)
         layout.addWidget(self.listbox_channels)
@@ -170,7 +170,7 @@ class AppUI(QWidget):
 
         self.progress_dialog = QProgressDialog("Fetching channels...", "Cancel", 0, 100, self)
         self.progress_dialog.setWindowTitle("Loading")
-        self.progress_dialog.setWindowModality(Qt.WindowModal)
+        self.progress_dialog.setWindowModality(Qt.WindowModality.WindowModal)
         self.progress_dialog.setValue(0)
         self.progress_dialog.show()
 
@@ -221,7 +221,7 @@ class AppUI(QWidget):
             layout.setContentsMargins(10, 6, 10, 6)
             label_title = QLabel(ch['title'])
             label_id = QLabel(ch['id'])
-            label_id.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            label_id.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             label_id.setStyleSheet("color: gray; font-family: monospace;")
             layout.addWidget(label_title, 2)
             layout.addWidget(label_id, 1)
@@ -287,7 +287,7 @@ class AppUI(QWidget):
 
 if __name__ == "__main__":
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from PySide6.QtWidgets import QApplication
     app = QApplication(sys.argv)
     window = AppUI()
     window.show()

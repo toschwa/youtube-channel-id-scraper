@@ -2,7 +2,7 @@ import sys
 import argparse
 from scraper.channel_scraper import fetch_channel_ids, save_new_channels_to_file, load_config
 from ui.app_ui import AppUI
-from PyQt5.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication
 
 def main():
     parser = argparse.ArgumentParser()
@@ -10,7 +10,7 @@ def main():
     args = parser.parse_args()
 
     if args.no_ui:
-        channel_id, api_key, output_file = load_config()
+        channel_id, api_key, output_file = load_config('config.json')
         channels = fetch_channel_ids(channel_id, api_key)
         save_new_channels_to_file(channels, output_file)
     else:
@@ -19,7 +19,6 @@ def main():
         screen_size = screen.size()
         # Desired window size and aspect ratio
         desired_width, desired_height = 600, 800
-        aspect_ratio = desired_width / desired_height
 
         # Check if screen can support the desired size
         if screen_size.width() < desired_width or screen_size.height() < desired_height:
@@ -35,7 +34,7 @@ def main():
         window = AppUI()
         window.resize(width, height)
         window.show()
-        sys.exit(app.exec_())
+        sys.exit(app.exec())
 
 if __name__ == "__main__":
     main()
