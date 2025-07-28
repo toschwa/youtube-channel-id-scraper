@@ -1,4 +1,16 @@
 import argparse
+import sys
+import os
+
+IS_PRODUCTION = getattr(sys, 'frozen', False)
+
+if IS_PRODUCTION:
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+    print(f"Running in development mode, base directory: {BASE_DIR}")
+
+CONFIG_FILE = os.path.join(BASE_DIR, 'config.json')
 
 def main():
     parser = argparse.ArgumentParser()
@@ -7,11 +19,10 @@ def main():
 
     if args.no_ui:
         from scraper.channel_scraper import fetch_channel_ids, save_new_channels_to_file, load_config
-        channel_id, api_key, output_file = load_config('config.json')
+        channel_id, api_key, output_file = load_config(CONFIG_FILE)
         channels = fetch_channel_ids(channel_id, api_key)
         save_new_channels_to_file(channels, output_file)
     else:
-        import sys
         from ui.app_ui import AppUI
         from PySide6.QtWidgets import QApplication
         app = QApplication(sys.argv)

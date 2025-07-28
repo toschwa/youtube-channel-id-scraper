@@ -2,8 +2,7 @@ import urllib.request
 import json
 import os
 from datetime import datetime
-
-CONFIG_FILE = os.path.join(os.path.dirname(__file__), '..', 'config.json')
+from main import CONFIG_FILE
 
 def load_config(config_file=CONFIG_FILE):
     if not os.path.exists(config_file):

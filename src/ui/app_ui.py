@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (
     QWidget, QLabel, QLineEdit, QPushButton, QListWidget, QListWidgetItem,
-    QVBoxLayout, QMessageBox, QAbstractItemView, QProgressDialog, QHBoxLayout, QComboBox, QFrame
+    QVBoxLayout, QMessageBox, QAbstractItemView, QProgressDialog, QHBoxLayout,
+    QComboBox, QFrame, QFileDialog
 )
 from PySide6.QtCore import Qt, QThread, Signal, QSize
 from PySide6.QtGui import QIcon, QPixmap
@@ -8,11 +9,9 @@ import os
 import json
 import urllib.request
 from scraper.channel_scraper import fetch_channel_ids
+from main import CONFIG_FILE, BASE_DIR
 
-CONFIG_FILE = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..', '..', 'config.json')
-)
-THUMB_CACHE_DIR = os.path.join(os.path.dirname(__file__), '..', '..', "thumb_cache")
+THUMB_CACHE_DIR = os.path.join(BASE_DIR, "thumb_cache")
 os.makedirs(THUMB_CACHE_DIR, exist_ok=True)
 
 class FetchChannelsThread(QThread):
@@ -103,6 +102,17 @@ class AppUI(QWidget):
         self.link_api_key.setOpenExternalLinks(True)
         self.link_api_key.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
         layout.addWidget(self.link_api_key)
+
+        # Output File
+        self.label_output_file = QLabel("Output Filepath:")
+        output_file_layout = QHBoxLayout()
+        self.entry_output_file = QLineEdit()
+        self.button_browse_output = QPushButton("Browse")
+        self.button_browse_output.clicked.connect(self.browse_output_file)
+        output_file_layout.addWidget(self.entry_output_file)
+        output_file_layout.addWidget(self.button_browse_output)
+        layout.addWidget(self.label_output_file)
+        layout.addLayout(output_file_layout)
 
         # Save Config Button
         self.button_save_config = QPushButton("Save Config")
@@ -253,13 +263,15 @@ class AppUI(QWidget):
                     config = json.load(f)
                 self.entry_channel_id.setText(config.get("channel_id", ""))
                 self.entry_api_key.setText(config.get("api_key", ""))
+                self.entry_output_file.setText(config.get("output_file", ""))
             except Exception as e:
                 QMessageBox.warning(self, "Config Error", f"Failed to load config: {e}")
 
     def save_config(self):
         config = {
             "channel_id": self.entry_channel_id.text(),
-            "api_key": self.entry_api_key.text()
+            "api_key": self.entry_api_key.text(),
+            "output_file": self.entry_output_file.text()
         }
         try:
             with open(CONFIG_FILE, "w") as f:
@@ -267,6 +279,11 @@ class AppUI(QWidget):
             QMessageBox.information(self, "Config Saved", "Configuration saved successfully.")
         except Exception as e:
             QMessageBox.critical(self, "Save Error", f"Failed to save config: {e}")
+
+    def browse_output_file(self):
+        file_path, _ = QFileDialog.getSaveFileName(self, "Select Output File", "", "YAML Files (*.yml);;All Files (*)")
+        if file_path:
+            self.entry_output_file.setText(file_path)
 
     def save_selected_channels(self):
         selected_items = self.listbox_channels.selectedItems()

@@ -1,5 +1,6 @@
 {
     "configurations": [
+
         {
             "name": "Launch Main",
             "type": "debugpy",
@@ -12,13 +13,6 @@
             "request": "launch",
             "program": "${workspaceFolder}/src/main.py",
             "args": ["--no-ui"],
-        },
-        {
-            "name": "Build with Nuitka",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}",
-            "args": ["-m", "nuitka", "--standalone", "src/main.py"],
         }
     ]
 }

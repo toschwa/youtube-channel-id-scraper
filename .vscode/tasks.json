@@ -1,0 +1,28 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "WIN: Build with Nuitka",
+            "type": "process",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "-m",
+                "nuitka",
+                "--msvc=latest",
+                "--standalone",
+                "--enable-plugin=pyside6",
+                "--output-dir=${workspaceFolder}/dist",
+                "${workspaceFolder}/src/main.py"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/.venv/Scripts/"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
