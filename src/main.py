@@ -1,7 +1,7 @@
 import argparse
 import sys
 import os
-from types.index import Config 
+from classes import Config 
 IS_PRODUCTION = getattr(sys, 'frozen', False)
 
 if IS_PRODUCTION:
