@@ -52,9 +52,15 @@ def save_new_channels_to_file(channels, output_file):
     else:
         last_write = datetime.min
 
+    def parse_published_at(published_at):
+        try:
+            return datetime.strptime(published_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+        except ValueError:
+            return datetime.strptime(published_at, "%Y-%m-%dT%H:%M:%SZ")
+
     new_channels = [
         ch for ch in channels
-        if ch.get("publishedAt") and datetime.strptime(ch["publishedAt"], "%Y-%m-%dT%H:%M:%SZ") > last_write
+        if ch.get("publishedAt") and parse_published_at(ch["publishedAt"]) > last_write
     ]
 
     if not new_channels:

@@ -13,6 +13,7 @@ from main import CONFIG_FILE, BASE_DIR
 
 THUMB_CACHE_DIR = os.path.join(BASE_DIR, "thumb_cache")
 os.makedirs(THUMB_CACHE_DIR, exist_ok=True)
+OUTPUT_FILE = os.path.join(BASE_DIR, "channels.yml")
 
 class FetchChannelsThread(QThread):
     result = Signal(list)
@@ -263,7 +264,7 @@ class AppUI(QWidget):
                     config = json.load(f)
                 self.entry_channel_id.setText(config.get("channel_id", ""))
                 self.entry_api_key.setText(config.get("api_key", ""))
-                self.entry_output_file.setText(config.get("output_file", ""))
+                self.entry_output_file.setText(config.get("output_file", OUTPUT_FILE))
             except Exception as e:
                 QMessageBox.warning(self, "Config Error", f"Failed to load config: {e}")
 
@@ -286,6 +287,7 @@ class AppUI(QWidget):
             self.entry_output_file.setText(file_path)
 
     def save_selected_channels(self):
+        output_file = self.entry_output_file.text() or OUTPUT_FILE
         selected_items = self.listbox_channels.selectedItems()
         selected_channels = [item.data(32) for item in selected_items]
 
@@ -293,7 +295,6 @@ class AppUI(QWidget):
             QMessageBox.warning(self, "Selection Error", "No channels selected.")
             return
 
-        output_file = os.path.join(os.path.dirname(__file__), "channels.yml")
         try:
             with open(output_file, "w") as f:
                 for channel in selected_channels:

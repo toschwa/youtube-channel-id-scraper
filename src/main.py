@@ -7,8 +7,7 @@ IS_PRODUCTION = getattr(sys, 'frozen', False)
 if IS_PRODUCTION:
     BASE_DIR = os.path.dirname(sys.executable)
 else:
-    BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
-    print(f"Running in development mode, base directory: {BASE_DIR}")
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 CONFIG_FILE = os.path.join(BASE_DIR, 'config.json')
 

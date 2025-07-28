@@ -1,5 +1,6 @@
 # Channel ID Scraper
 config.json
+channels.yml
 thumb_cache/
 
 # Byte-compiled / optimized / DLL files
