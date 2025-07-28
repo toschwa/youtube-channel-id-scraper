@@ -1,8 +1,4 @@
-import sys
 import argparse
-from scraper.channel_scraper import fetch_channel_ids, save_new_channels_to_file, load_config
-from ui.app_ui import AppUI
-from PySide6.QtWidgets import QApplication
 
 def main():
     parser = argparse.ArgumentParser()
@@ -10,10 +6,14 @@ def main():
     args = parser.parse_args()
 
     if args.no_ui:
+        from scraper.channel_scraper import fetch_channel_ids, save_new_channels_to_file, load_config
         channel_id, api_key, output_file = load_config('config.json')
         channels = fetch_channel_ids(channel_id, api_key)
         save_new_channels_to_file(channels, output_file)
     else:
+        import sys
+        from ui.app_ui import AppUI
+        from PySide6.QtWidgets import QApplication
         app = QApplication(sys.argv)
         screen = app.primaryScreen()
         screen_size = screen.size()
