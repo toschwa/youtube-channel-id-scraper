@@ -1,24 +1,16 @@
 import urllib.request
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from main import CONFIG_FILE
 
-def load_config(config_file=CONFIG_FILE):
-    if not os.path.exists(config_file):
-        raise FileNotFoundError(f"Config file not found: {config_file}")
-    with open(config_file, "r") as f:
-        config = json.load(f)
-    if "channel_id" not in config or "api_key" not in config or "output_file" not in config:
-        raise KeyError("Config file must contain 'channel_id', 'api_key', and 'output_file'")
-    return config["channel_id"], config["api_key"], config["output_file"]
-
-def fetch_channel_ids(channel_id=None, api_key=None):
-    # If not provided, load from config
-    if channel_id is None or api_key is None:
-        channel_id, api_key, _ = load_config()
-
-    API_URL = f"https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&channelId={channel_id}&key={api_key}&maxResults=50"
+def fetch_channel_ids():
+    if CONFIG_FILE.channel_id == "":
+        raise ValueError("Channel ID is not set in the configuration file.")
+    if CONFIG_FILE.api_key == "":
+        raise ValueError("API key is not set in the configuration file.") 
+    
+    API_URL = f"https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&channelId={CONFIG_FILE.channel_id}&key={CONFIG_FILE.api_key}&maxResults=50"
     channels = []
     next_page_token = ""
     while True:
@@ -48,7 +40,7 @@ def fetch_channel_ids(channel_id=None, api_key=None):
 def save_new_channels_to_file(channels, output_file):
     # Get last write time
     if os.path.exists(output_file):
-        last_write = datetime.utcfromtimestamp(os.path.getmtime(output_file))
+        last_write = datetime.fromtimestamp(os.path.getmtime(output_file), timezone.utc)
     else:
         last_write = datetime.min
 

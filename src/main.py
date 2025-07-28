@@ -1,7 +1,7 @@
 import argparse
 import sys
 import os
-
+from types.index import Config 
 IS_PRODUCTION = getattr(sys, 'frozen', False)
 
 if IS_PRODUCTION:
@@ -9,7 +9,9 @@ if IS_PRODUCTION:
 else:
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-CONFIG_FILE = os.path.join(BASE_DIR, 'config.json')
+CONFIG_FILE_PATH = os.path.join(BASE_DIR, 'config.json')
+CONFIG_FILE = Config()
+CONFIG_FILE.read_from_disk(CONFIG_FILE_PATH)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -17,10 +19,9 @@ def main():
     args = parser.parse_args()
 
     if args.no_ui:
-        from scraper.channel_scraper import fetch_channel_ids, save_new_channels_to_file, load_config
-        channel_id, api_key, output_file = load_config(CONFIG_FILE)
-        channels = fetch_channel_ids(channel_id, api_key)
-        save_new_channels_to_file(channels, output_file)
+        from scraper.channel_scraper import fetch_channel_ids, save_new_channels_to_file
+        channels = fetch_channel_ids()
+        save_new_channels_to_file(channels, CONFIG_FILE.output_file)
     else:
         from ui.app_ui import AppUI
         from PySide6.QtWidgets import QApplication

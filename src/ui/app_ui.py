@@ -6,10 +6,9 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QThread, Signal, QSize
 from PySide6.QtGui import QIcon, QPixmap
 import os
-import json
 import urllib.request
 from scraper.channel_scraper import fetch_channel_ids
-from main import CONFIG_FILE, BASE_DIR
+from main import BASE_DIR, CONFIG_FILE, CONFIG_FILE_PATH
 
 THUMB_CACHE_DIR = os.path.join(BASE_DIR, "thumb_cache")
 os.makedirs(THUMB_CACHE_DIR, exist_ok=True)
@@ -51,7 +50,7 @@ class FetchChannelsThread(QThread):
             return ch
 
         try:
-            channels = fetch_channel_ids(self.channel_id, self.api_key)
+            channels = fetch_channel_ids()
             total = len(channels)
             with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
                 results = []
@@ -258,25 +257,16 @@ class AppUI(QWidget):
         QMessageBox.critical(self, "Fetch Error", error_msg)
 
     def load_config_on_startup(self):
-        if os.path.exists(CONFIG_FILE):
-            try:
-                with open(CONFIG_FILE, "r") as f:
-                    config = json.load(f)
-                self.entry_channel_id.setText(config.get("channel_id", ""))
-                self.entry_api_key.setText(config.get("api_key", ""))
-                self.entry_output_file.setText(config.get("output_file", OUTPUT_FILE))
-            except Exception as e:
-                QMessageBox.warning(self, "Config Error", f"Failed to load config: {e}")
+        self.entry_channel_id.setText(CONFIG_FILE.channel_id)
+        self.entry_api_key.setText(CONFIG_FILE.api_key)
+        self.entry_output_file.setText(CONFIG_FILE.output_file)
 
     def save_config(self):
-        config = {
-            "channel_id": self.entry_channel_id.text(),
-            "api_key": self.entry_api_key.text(),
-            "output_file": self.entry_output_file.text()
-        }
         try:
-            with open(CONFIG_FILE, "w") as f:
-                json.dump(config, f, indent=4)
+            CONFIG_FILE.channel_id = self.entry_channel_id.text()
+            CONFIG_FILE.api_key = self.entry_api_key.text()
+            CONFIG_FILE.output_file = self.entry_output_file.text()
+            CONFIG_FILE.write_to_disk(CONFIG_FILE_PATH)
             QMessageBox.information(self, "Config Saved", "Configuration saved successfully.")
         except Exception as e:
             QMessageBox.critical(self, "Save Error", f"Failed to save config: {e}")
