@@ -240,7 +240,7 @@ class AppUI(QWidget):
             if icon:
                 item.setIcon(icon)
             item.setSizeHint(QSize(0, self.listbox_channels.iconSize().height() + 16))
-            item.setData(32, ch['id'])  # 32 is Qt.UserRole
+            item.setData(32, (ch['id'], ch['title']))  # 32 is Qt.UserRole
             self.listbox_channels.addItem(item)
             self.listbox_channels.setItemWidget(item, widget)
         self.update_selected_count()
@@ -286,9 +286,9 @@ class AppUI(QWidget):
             return
 
         try:
-            with open(output_file, "w") as f:
-                for channel in selected_channels:
-                    f.write(f"- {channel}\n")
+            with open(output_file, "w", encoding="utf-8") as f:
+                for channel_id, channel_title in selected_channels:
+                    f.write(f"- {channel_id} #{channel_title}\n")
             QMessageBox.information(self, "Success", f"Selected channels saved to {output_file}")
         except Exception as e:
             QMessageBox.critical(self, "Save Error", str(e))

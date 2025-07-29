@@ -59,7 +59,7 @@ def save_new_channels_to_file(channels, output_file):
         print("No new channels to append.")
         return
 
-    with open(output_file, "a") as f:
+    with open(output_file, "a", encoding="utf-8") as f:
         for ch in new_channels:
-            f.write(f"- {ch['id']}\n")
+            f.write(f"- {ch['id']} #{ch['title']}\n")
     print(f"Appended {len(new_channels)} new channels to {output_file}")
